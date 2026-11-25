@@ -94,6 +94,25 @@ def check_has_event(value):
         raise ValueError("entry must carry its twist: something happened")
 
 
+def check_twist_after_setup(value):
+    # Setup-then-twist order: the Wi-Fi request must come before the
+    # wedding, so the story reads as an ordinary ask that turns into
+    # something bigger, not a wedding mentioned out of nowhere.
+    lowered = value.lower()
+    if lowered.index("wifi") > lowered.index("got a wedding"):
+        raise ValueError("twist must come after the setup")
+
+
+def check_no_repeated_word(value):
+    # Every word earns its place: at 32 characters no word may repeat.
+    words = [w.strip(",") for w in value.lower().split()]
+    seen = set()
+    for word in words:
+        if word in seen:
+            raise ValueError("entry repeats a word: %s" % word)
+        seen.add(word)
+
+
 def check_fresh(value):
     lowered = value.lower()
     for stock in STOCK_JOKES:
@@ -117,6 +136,8 @@ FORM_CHECKS = (
     check_wifi_name,
     check_has_character,
     check_has_event,
+    check_twist_after_setup,
+    check_no_repeated_word,
 )
 
 CONTENT_CHECKS = (
